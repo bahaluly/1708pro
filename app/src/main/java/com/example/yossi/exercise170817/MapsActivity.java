@@ -38,7 +38,7 @@ public class MapsActivity extends FragmentActivity implements
     public double latitudeApp, latitudeReal;
     public SupportMapFragment mapFragment;
 
-//fdgfghfg
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
