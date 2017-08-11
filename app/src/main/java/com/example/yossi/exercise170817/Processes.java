@@ -47,7 +47,7 @@ public class Processes extends AppCompatActivity {
         btOut = (Button) findViewById(R.id.btOut);
         textClock = (TextClock) findViewById(R.id.textClock);
         //
-        wNmae = "Gil Sanovski";
+        wNmae = "Gil Snovsky";
         final Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 
 
@@ -76,8 +76,13 @@ public class Processes extends AppCompatActivity {
                 Log.d("LOCATION: ", "myAppLocation: " + myAppLocation);
 
                 String LatLangApp = String.valueOf(latitudeApp)+","+String.valueOf(longitudeApp);
-
-                db.addRow(new Worker(wNmae,getTime(),getTime(),LatLangApp,LatLangApp));
+                Log.d("LOCATION: ", "myAppLocation: " + LatLangApp);
+                DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                Log.d("getTime: ", "getTime: 2 " + df);
+                String timetocheck = df.format(Calendar.getInstance().getTime());
+                Log.d("getTime: ", "getTime: 2 " + timetocheck);
+                Log.d("LOCATION: ", "ALL: " + "name: "+wNmae+" time: "+timetocheck+" place: "+LatLangApp);
+                db.addRow(new Worker(wNmae,timetocheck,timetocheck,LatLangApp,LatLangApp));
 
                 Log.d("LOCATION: ", "ALL: " + db.getAllRows());
 
@@ -139,11 +144,13 @@ public class Processes extends AppCompatActivity {
         }
     }
 
-    public String getTime () {
-        Log.d("getTime: ", "getTime: ");
+
+    /*public String getTime () {
+        Log.d("getTime: ", "getTime: 1");
         // ...getting date automaticly...
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm");
         String timetocheck = df.format(Calendar.getInstance().getTime().toString());
+        Log.d("getTime: ", "getTime: 2");
         return timetocheck;
-    }
+    }*/
 }
