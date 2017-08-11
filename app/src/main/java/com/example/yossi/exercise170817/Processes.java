@@ -22,6 +22,7 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 
 import static com.example.yossi.exercise170817.MapsActivity.myAppLocation;
 
@@ -49,6 +50,7 @@ public class Processes extends AppCompatActivity {
         //
         wNmae = "Gil Snovsky";
         final Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        db = new DBHandler(this);
 
 
         btIn.setOnClickListener(new View.OnClickListener() {
@@ -77,15 +79,16 @@ public class Processes extends AppCompatActivity {
 
                 String LatLangApp = String.valueOf(latitudeApp)+","+String.valueOf(longitudeApp);
                 Log.d("LOCATION: ", "myAppLocation: " + LatLangApp);
-                DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+                /*DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
                 Log.d("getTime: ", "getTime: 2 " + df);
                 String timetocheck = df.format(Calendar.getInstance().getTime());
-                Log.d("getTime: ", "getTime: 2 " + timetocheck);
-                Log.d("LOCATION: ", "ALL: " + "name: "+wNmae+" time: "+timetocheck+" place: "+LatLangApp);
-                db.addRow(new Worker(wNmae,timetocheck,timetocheck,LatLangApp,LatLangApp));
+                Log.d("getTime: ", "getTime: 2 " + timetocheck);*/
 
-                Log.d("LOCATION: ", "ALL: " + db.getAllRows());
+                Log.d("LOCATION: ", "ALL: " + "name: "+wNmae+" time: "+getNewTime()+" place: "+LatLangApp);
+                db.addRow(new Worker(wNmae,getNewTime(),getNewTime(),LatLangApp,LatLangApp));
 
+                getToLog();
             }
         });
 
@@ -145,12 +148,23 @@ public class Processes extends AppCompatActivity {
     }
 
 
-    /*public String getTime () {
+    public String getNewTime() {
         Log.d("getTime: ", "getTime: 1");
         // ...getting date automaticly...
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm");
-        String timetocheck = df.format(Calendar.getInstance().getTime().toString());
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        String timetocheck = df.format(Calendar.getInstance().getTime());
         Log.d("getTime: ", "getTime: 2");
         return timetocheck;
-    }*/
+    }
+
+    public void getToLog(){
+        //first we will get all DB to screen !!
+        List<Worker> worker = db.getAllRows();
+        for (Worker users : worker) {
+            String log = "Id: " + users.getId() + " ,Name: " + users.getName()
+                    + " intime: " + users.getIntime() + " outtime: " + users.getOuttime()
+                    + " apploc: " + users.getApplocation() + " userloc: " + users.getUserlocation();
+            // Writing DB  to log
+            Log.d("users: : ", log);}
+    }
 }

@@ -49,7 +49,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 + KEY_INTIME + " TEXT,"
                 + KEY_OUTTIME + " TEXT,"
                 + KEY_APPLOCCATION + " TEXT,"
-                + KEY_USERLOCCATION + " TEXT," + ")";
+                + KEY_USERLOCCATION + " TEXT" + ")";
 
         Log.i("table start",CREATE_CONTACTS_TABLE);//for debugging
 
