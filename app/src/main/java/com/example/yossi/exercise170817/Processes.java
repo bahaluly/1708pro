@@ -88,7 +88,7 @@ public class Processes extends AppCompatActivity {
                 Log.d("LOCATION: ", "ALL: " + "name: "+wNmae+" time: "+getNewTime()+" place: "+LatLangApp);
                 db.addRow(new Worker(wNmae,getNewTime(),getNewTime(),LatLangApp,LatLangApp));
 
-                getToLog();
+                getAllToLog();
             }
         });
 
@@ -96,10 +96,11 @@ public class Processes extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent i = new Intent(android.content.Intent.ACTION_VIEW,
-                        Uri.parse("http://www.google.co.il"));
-                startActivity(i);
-                //Processes.this.finish();
+                String endOfDay = getNewTime();
+                Log.d("getTime: ", "getTime: 3" + endOfDay);
+                db.updateEndOfDay(endOfDay);
+                getAllToLog();
+                Processes.this.finish();
             }
         });
 
@@ -157,7 +158,7 @@ public class Processes extends AppCompatActivity {
         return timetocheck;
     }
 
-    public void getToLog(){
+    public void getAllToLog(){
         //first we will get all DB to screen !!
         List<Worker> worker = db.getAllRows();
         for (Worker users : worker) {
