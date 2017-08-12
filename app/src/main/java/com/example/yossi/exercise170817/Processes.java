@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextClock;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -98,11 +99,17 @@ public class Processes extends AppCompatActivity {
 
                 String endOfDay = getNewTime();
                 Log.d("getTime: ", "getTime: 3" + endOfDay);
-                int lastid = db.getLastId();
-                if (lastid>0) {
-                    db.updateEndOfDay(endOfDay, lastid);
-                    getAllToLog();
-                    Processes.this.finish();
+                Worker test = db.getLastId();
+                Log.d("getWorker: ", "getWorker: 1" + test);
+                if (test.getId()>0) {
+                    Log.d("getWorker: ", "getWorker: 2  " + test.getIntime()+ "  "+ test.getOuttime());
+                    if (test.getIntime().equals(test.getOuttime())){
+                        db.updateEndOfDay(endOfDay, test.getId());
+                        getAllToLog();
+                        Processes.this.finish();
+                    }else {
+                        Toast.makeText(Processes.this, "You must first open the day, so you can close it!!", Toast.LENGTH_LONG).show();
+                    }
                 }else {
                     getAllToLog();
                 }

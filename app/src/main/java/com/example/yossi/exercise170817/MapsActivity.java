@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -24,6 +25,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
 public class MapsActivity extends FragmentActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -34,9 +37,10 @@ public class MapsActivity extends FragmentActivity implements
     private static GoogleMap mMap;
     private static Location lastLocation;
     public static Location myAppLocation, myRealLocation;
-    public double longitudeApp, longitudeReal;
-    public double latitudeApp, latitudeReal;
+    public double longitudeApp, longitudeWorker;
+    public double latitudeApp, latitudeWorker;
     public SupportMapFragment mapFragment;
+    DBHandler db;
 
 
     @Override
@@ -63,6 +67,7 @@ public class MapsActivity extends FragmentActivity implements
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        db = new DBHandler(this);
         mMap = googleMap;
         Log.d("LOCATION: ", "myAppLocation:111 ");
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -108,10 +113,26 @@ public class MapsActivity extends FragmentActivity implements
             @Override
             public void onMarkerDragEnd(Marker arg0) {
                 // TODO Auto-generated method stub
-                latitudeReal = arg0.getPosition().latitude;
-                longitudeReal = arg0.getPosition().longitude;
+                latitudeWorker = arg0.getPosition().latitude;
+                longitudeWorker = arg0.getPosition().longitude;
+                String LatLangUser = String.valueOf(latitudeWorker)+","+String.valueOf(longitudeWorker);
                 Log.i("testergeio...",""+arg0.getPosition().latitude+"..."+arg0.getPosition().longitude);
 
+                Worker test = db.getLastId();
+                if (test.getId()>0) {
+                    Log.d("getWorker: ", "onMarkerDragEnd: 2  " + test.getId()+ "  "+
+                            test.getApplocation()+ "  "+ test.getUserlocation());
+                    if (test.getApplocation().equals(test.getUserlocation())){
+                        db.updateMoveByUser(LatLangUser, test.getId());
+                        getAllToLog();
+                        //MapsActivity.this.finish();
+                    }else {
+                        Toast.makeText(MapsActivity.this, "No change in map!!", Toast.LENGTH_LONG).show();
+                    }
+                }else {
+                    Toast.makeText(MapsActivity.this, "You must first open the day, so you can close it!!", Toast.LENGTH_LONG).show();
+                    getAllToLog();
+                }
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(arg0.getPosition()));
             }
 
@@ -132,8 +153,8 @@ public class MapsActivity extends FragmentActivity implements
         String msg = "New Latitude: " + location.getLatitude()
                 + "New Longitude: " + location.getLongitude();
 
-        latitudeReal=location.getLatitude();
-        longitudeReal=location.getLongitude() ;
+        latitudeWorker = location.getLatitude();
+        longitudeWorker = location.getLongitude() ;
 
     }
 
@@ -175,6 +196,17 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    public void getAllToLog(){
+        //first we will get all DB to screen !!
+        List<Worker> worker = db.getAllRows();
+        for (Worker users : worker) {
+            String log = "Id: " + users.getId() + " ,Name: " + users.getName()
+                    + " intime: " + users.getIntime() + " outtime: " + users.getOuttime()
+                    + " apploc: " + users.getApplocation() + " userloc: " + users.getUserlocation();
+            // Writing DB  to log
+            Log.d("users: : ", log);}
     }
 
 }

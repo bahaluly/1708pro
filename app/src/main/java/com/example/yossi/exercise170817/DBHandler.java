@@ -141,10 +141,21 @@ public class DBHandler extends SQLiteOpenHelper {
                 new String[]{String.valueOf(lastid)});
     }
 
-    public int getLastId() {
+    public void updateMoveByUser(String userlocation, int lastid) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Log.d("outtime: ", "outtime: 4 updateEndOfDay "+userlocation);
+        ContentValues values = new ContentValues();
+        values.put(KEY_USERLOCCATION, userlocation);
+
+        // updating row
+        db.update(TABLE_WORKERS, values, KEY_ID + " = ?",
+                new String[]{String.valueOf(lastid)});
+    }
+
+    public Worker getLastId() {
         Log.d("getLastId: ", "outtime: 5 updateEndOfDay ");
         SQLiteDatabase db = this.getWritableDatabase();
-        String ID = "SELECT " + KEY_ID + " FROM " + TABLE_WORKERS
+        String ID = "SELECT " + "*"+ " FROM " + TABLE_WORKERS
                     + " ORDER BY "+ KEY_ID +" DESC  LIMIT 1";
         Log.d("getLastId: ", "outtime: 5 updateEndOfDay "+ID);
         Cursor cursor = db.rawQuery(ID, null);
@@ -153,10 +164,13 @@ public class DBHandler extends SQLiteOpenHelper {
             int a = cursor.getInt(0);
             Log.d("getLastId: ", "getLastId: 2 cursor= "+cursor + "  "+a);
 
-            return cursor.getInt(0);
+            Worker contact = new Worker((cursor.getInt(0)),
+                    cursor.getString(1), cursor.getString(2), cursor.getString(3),
+                    cursor.getString(4), cursor.getString(5));
+            // return user
+            return contact;
         } else
-            return 0;
-
+            return null;
     }
 
 }
