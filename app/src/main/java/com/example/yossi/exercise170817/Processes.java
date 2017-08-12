@@ -98,9 +98,14 @@ public class Processes extends AppCompatActivity {
 
                 String endOfDay = getNewTime();
                 Log.d("getTime: ", "getTime: 3" + endOfDay);
-                db.updateEndOfDay(endOfDay);
-                getAllToLog();
-                Processes.this.finish();
+                int lastid = db.getLastId();
+                if (lastid>0) {
+                    db.updateEndOfDay(endOfDay, lastid);
+                    getAllToLog();
+                    Processes.this.finish();
+                }else {
+                    getAllToLog();
+                }
             }
         });
 

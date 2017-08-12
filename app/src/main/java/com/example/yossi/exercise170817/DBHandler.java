@@ -130,7 +130,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     // Updating a end day
-    public void updateEndOfDay(String outtime) {
+    public void updateEndOfDay(String outtime, int lastid) {
         SQLiteDatabase db = this.getWritableDatabase();
         Log.d("outtime: ", "outtime: 4 updateEndOfDay "+outtime);
         ContentValues values = new ContentValues();
@@ -138,7 +138,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         // updating row
         db.update(TABLE_WORKERS, values, KEY_ID + " = ?",
-                new String[]{String.valueOf(getLastId())});
+                new String[]{String.valueOf(lastid)});
     }
 
     public int getLastId() {
@@ -148,11 +148,14 @@ public class DBHandler extends SQLiteOpenHelper {
                     + " ORDER BY "+ KEY_ID +" DESC  LIMIT 1";
         Log.d("getLastId: ", "outtime: 5 updateEndOfDay "+ID);
         Cursor cursor = db.rawQuery(ID, null);
-        cursor.moveToFirst();
-        int a = cursor.getInt(0);
-        Log.d("getLastId: ", "getLastId: 2 cursor= "+cursor + "  "+a);
+        if (cursor != null&& cursor.moveToFirst()) {
+            cursor.moveToFirst();
+            int a = cursor.getInt(0);
+            Log.d("getLastId: ", "getLastId: 2 cursor= "+cursor + "  "+a);
 
-        return cursor.getInt(0);
+            return cursor.getInt(0);
+        } else
+            return 0;
 
     }
 
