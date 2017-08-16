@@ -69,6 +69,7 @@ public class MapsActivity extends FragmentActivity implements
     public void onMapReady(GoogleMap googleMap) {
         db = new DBHandler(this);
         mMap = googleMap;
+
         Log.d("LOCATION: ", "myAppLocation:111 ");
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Log.d("LOCATION: ", "myAppLocation:122 ");
@@ -83,10 +84,17 @@ public class MapsActivity extends FragmentActivity implements
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        myAppLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        longitudeApp = myAppLocation.getLongitude();
-        latitudeApp = myAppLocation.getLatitude();
-        Log.d("LOCATION: ", "myAppLocation: 222" + myAppLocation);
+
+        try {
+            myAppLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            longitudeApp = myAppLocation.getLongitude();
+            latitudeApp = myAppLocation.getLatitude();
+            Log.d("LOCATION: ", "myAppLocation: 222" + myAppLocation);
+        } catch (Exception e) {
+
+            longitudeApp = 34.848616;
+            latitudeApp = 32.173049;
+        }
 
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.setMyLocationEnabled(true);
@@ -100,7 +108,7 @@ public class MapsActivity extends FragmentActivity implements
         mMap.moveCamera(CameraUpdateFactory.newLatLng(NOWLOCATION));
         mMap.animateCamera(zoom);
 
-        nowlocation.showInfoWindow(); //, Marker nowlocation =
+        nowlocation.showInfoWindow();
 
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
