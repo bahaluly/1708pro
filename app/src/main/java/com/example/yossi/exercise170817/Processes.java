@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -34,6 +36,8 @@ public class Processes extends AppCompatActivity {
     TextClock textClock;
     String wNmae;
     private static final int CAMERA_REQUEST = 165;
+    public static final int MULTIPLE_PERMISSIONS = 10; // code you want.
+    String[] permissions;
     DBHandler db;
 
     @Override
@@ -53,7 +57,7 @@ public class Processes extends AppCompatActivity {
         final Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         db = new DBHandler(this);
 
-
+        // START OF THE DAY
         btIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,6 +97,7 @@ public class Processes extends AppCompatActivity {
             }
         });
 
+        // END OF THE DAY
         btOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,7 +147,12 @@ public class Processes extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                permissions= new String[]{
+                        Manifest.permission.CAMERA};
+
+                if (checkPermissions())  //  permissions  granted.
+
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
                 //Log.i("Image is: ", "Camera by button");
             }
         });
@@ -180,4 +190,39 @@ public class Processes extends AppCompatActivity {
             // Writing DB  to log
             Log.d("users: : ", log);}
     }
+
+    private  boolean checkPermissions() {
+        int result;
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        for (String p:permissions) {
+            result = ContextCompat.checkSelfPermission(getApplicationContext(),p);
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(p);
+            }
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),MULTIPLE_PERMISSIONS );
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MULTIPLE_PERMISSIONS:{
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    // permissions granted.
+                } else {
+                    String permissionsReject = "";
+                    for (String per : permissions) {
+                        permissionsReject += "\n" + per;
+                    }
+                    // permissions list of don't granted permission
+                }
+                return;
+            }
+        }
+    }
+
 }
