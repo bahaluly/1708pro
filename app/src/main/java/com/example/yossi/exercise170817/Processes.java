@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -165,8 +166,33 @@ public class Processes extends AppCompatActivity {
         {
             Log.i("Image is: ", "Camera by image");
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-            MediaStore.Images.Media.insertImage(getContentResolver(), photo, "aaa" , "bbb");
+            Worker test = db.getLastId();
+            createDirectoryAndSaveFile(photo,""+test.getId()+".jpg");
+            //MediaStore.Images.Media.insertImage(getContentResolver(), photo, "aaa" , "bbb");
 
+        }
+    }
+
+    private void createDirectoryAndSaveFile(Bitmap imageToSave, String fileName) {
+
+        File direct = new File(Environment.getExternalStorageDirectory() + "/DirName");
+
+        if (!direct.exists()) {
+            File wallpaperDirectory = new File("/sdcard/TimeClock/");
+            wallpaperDirectory.mkdirs();
+        }
+
+        File file = new File(new File("/sdcard/TimeClock/"), fileName);
+        if (file.exists()) {
+            file.delete();
+        }
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            imageToSave.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
